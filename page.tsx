@@ -1,19 +1,39 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import { data } from './data';
 import './page.css';
 
 export default function Home() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredTracks = data.filter(
+    (track) =>
+      track.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      track.author.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className={'wrapper'}>
       <div className={'container'}>
         <main className={'main'}>
           <nav className={'main__nav'}>
             <div className={'nav__logo'}>
-              {/*TODO: img –> Image*/}
-              <img
-                width={250}
-                height={170}
+              <Image
+                width={113}
+                height={17}
                 className={'logo__image'}
                 src="/img/logo.png"
                 alt={'logo'}
+                priority
               />
             </div>
             <div className={'nav__burger'}>
@@ -24,20 +44,19 @@ export default function Home() {
             <div className={'nav__menu'}>
               <ul className={'menu__list'}>
                 <li className={'menu__item'}>
-                  {/*TODO: a -> Link*/}
-                  <a href="#" className={'menu__link'}>
+                  <Link href="/" className={'menu__link'}>
                     Главное
-                  </a>
+                  </Link>
                 </li>
                 <li className={'menu__item'}>
-                  <a href="#" className={'menu__link'}>
+                  <Link href="/playlist" className={'menu__link'}>
                     Мой плейлист
-                  </a>
+                  </Link>
                 </li>
                 <li className={'menu__item'}>
-                  <a href="../signin.html" className={'menu__link'}>
+                  <Link href="/signin" className={'menu__link'}>
                     Войти
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -52,6 +71,8 @@ export default function Home() {
                 type="search"
                 placeholder="Поиск"
                 name="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <h2 className={'centerblock__h2'}>Треки</h2>
@@ -73,174 +94,52 @@ export default function Home() {
                 </div>
               </div>
               <div className={'content__playlist'}>
-                <div className={'playlist__item'}>
-                  <div className={'playlist__track'}>
-                    <div className={'track__title'}>
-                      <div className={'track__titleImage'}>
-                        <svg className={'track__titleSvg'}>
-                          <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+                {filteredTracks.map((track) => (
+                  <div className={'playlist__item'} key={track._id}>
+                    <div className={'playlist__track'}>
+                      <div className={'track__title'}>
+                        <div className={'track__titleImage'}>
+                          <svg className={'track__titleSvg'}>
+                            <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+                          </svg>
+                        </div>
+                        <div className="track__title-text">
+                          <Link
+                            href={`/track/${track._id}`}
+                            className={'track__titleLink'}
+                          >
+                            {track.name}{' '}
+                            <span className={'track__titleSpan'}></span>
+                          </Link>
+                        </div>
+                      </div>
+                      <div className={'track__author'}>
+                        <Link
+                          href={`/artist/${encodeURIComponent(track.author)}`}
+                          className={'track__authorLink'}
+                        >
+                          {track.author}
+                        </Link>
+                      </div>
+                      <div className={'track__album'}>
+                        <Link
+                          href={`/album/${encodeURIComponent(track.album)}`}
+                          className={'track__albumLink'}
+                        >
+                          {track.album}
+                        </Link>
+                      </div>
+                      <div className="track__time">
+                        <svg className={'track__timeSvg'}>
+                          <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
                         </svg>
+                        <span className={'track__timeText'}>
+                          {formatDuration(track.duration_in_seconds)}
+                        </span>
                       </div>
-                      <div className="track__title-text">
-                        <a className={'track__titleLink'} href="">
-                          Guilt <span className={'track__titleSpan'}></span>
-                        </a>
-                      </div>
-                    </div>
-                    <div className={'track__author'}>
-                      <a className={'track__authorLink'} href="">
-                        Nero
-                      </a>
-                    </div>
-                    <div className={'track__album'}>
-                      <a className={'track__albumLink'} href="">
-                        Welcome Reality
-                      </a>
-                    </div>
-                    <div className="track__time">
-                      <svg className={'track__timeSvg'}>
-                        <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                      </svg>
-                      <span className={'track__timeText'}>4:44</span>
                     </div>
                   </div>
-                </div>
-
-                <div className={'playlist__item'}>
-                  <div className={'playlist__track'}>
-                    <div className={'track__title'}>
-                      <div className={'track__titleImage'}>
-                        <svg className={'track__titleSvg'}>
-                          <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-                        </svg>
-                      </div>
-                      <div className="track__title-text">
-                        <a className={'track__titleLink'} href="">
-                          Elektro <span className={'track__titleSpan'}></span>
-                        </a>
-                      </div>
-                    </div>
-                    <div className={'track__author'}>
-                      <a className={'track__authorLink'} href="">
-                        Dynoro, Outwork, Mr. Gee
-                      </a>
-                    </div>
-                    <div className={'track__album'}>
-                      <a className={'track__albumLink'} href="">
-                        Elektro
-                      </a>
-                    </div>
-                    <div className="track__time">
-                      <svg className={'track__timeSvg'}>
-                        <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                      </svg>
-                      <span className={'track__timeText'}>2:22</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={'playlist__item'}>
-                  <div className={'playlist__track'}>
-                    <div className={'track__title'}>
-                      <div className={'track__titleImage'}>
-                        <svg className={'track__titleSvg'}>
-                          <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-                        </svg>
-                      </div>
-                      <div className="track__title-text">
-                        <a className={'track__titleLink'} href="">
-                          I’m Fire <span className={'track__titleSpan'}></span>
-                        </a>
-                      </div>
-                    </div>
-                    <div className={'track__author'}>
-                      <a className={'track__authorLink'} href="">
-                        Ali Bakgor
-                      </a>
-                    </div>
-                    <div className={'track__album'}>
-                      <a className={'track__albumLink'} href="">
-                        I’m Fire
-                      </a>
-                    </div>
-                    <div className="track__time">
-                      <svg className={'track__timeSvg'}>
-                        <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                      </svg>
-                      <span className={'track__timeText'}>2:22</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={'playlist__item'}>
-                  <div className={'playlist__track'}>
-                    <div className={'track__title'}>
-                      <div className={'track__titleImage'}>
-                        <svg className={'track__titleSvg'}>
-                          <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-                        </svg>
-                      </div>
-                      <div className="track__title-text">
-                        <a className={'track__titleLink'} href="">
-                          Non Stop
-                          <span className={'track__titleSpan'}>(Remix)</span>
-                        </a>
-                      </div>
-                    </div>
-                    <div className={'track__author'}>
-                      <a className={'track__authorLink'} href="">
-                        Стоункат, Psychopath
-                      </a>
-                    </div>
-                    <div className={'track__album'}>
-                      <a className={'track__albumLink'} href="">
-                        Non Stop
-                      </a>
-                    </div>
-                    <div className="track__time">
-                      <svg className={'track__timeSvg'}>
-                        <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                      </svg>
-                      <span className={'track__timeText'}>4:12</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={'playlist__item'}>
-                  <div className={'playlist__track'}>
-                    <div className={'track__title'}>
-                      <div className={'track__titleImage'}>
-                        <svg className={'track__titleSvg'}>
-                          <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-                        </svg>
-                      </div>
-                      <div>
-                        <a className={'track__titleLink'} href="">
-                          Run Run
-                          <span className={'track__titleSpan'}>
-                            (feat. AR/CO)
-                          </span>
-                        </a>
-                      </div>
-                    </div>
-                    <div className={'track__author'}>
-                      <a className={'track__authorLink'} href="">
-                        Jaded, Will Clarke, AR/CO
-                      </a>
-                    </div>
-                    <div className={'track__album'}>
-                      <a className={'track__albumLink'} href="">
-                        Run Run
-                      </a>
-                    </div>
-                    <div className="track__time">
-                      <svg className={'track__timeSvg'}>
-                        <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                      </svg>
-                      <span className={'track__timeText'}>2:54</span>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -256,37 +155,37 @@ export default function Home() {
             <div className={'sidebar__block'}>
               <div className={'sidebar__list'}>
                 <div className={'sidebar__item'}>
-                  <a className={'sidebar__link'} href="#">
-                    <img
+                  <Link className={'sidebar__link'} href="#">
+                    <Image
                       className={'sidebar__img'}
                       src="/img/playlist01.png"
                       alt="day's playlist"
                       width={250}
-                      height={170}
+                      height={150}
                     />
-                  </a>
+                  </Link>
                 </div>
                 <div className={'sidebar__item'}>
-                  <a className={'sidebar__link'} href="#">
-                    <img
+                  <Link className={'sidebar__link'} href="#">
+                    <Image
                       className={'sidebar__img'}
                       src="/img/playlist02.png"
                       alt="day's playlist"
                       width={250}
-                      height={170}
+                      height={150}
                     />
-                  </a>
+                  </Link>
                 </div>
                 <div className={'sidebar__item'}>
-                  <a className={'sidebar__link'} href="#">
-                    <img
+                  <Link className={'sidebar__link'} href="#">
+                    <Image
                       className={'sidebar__img'}
                       src="/img/playlist03.png"
                       alt="day's playlist"
                       width={250}
-                      height={170}
+                      height={150}
                     />
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -333,14 +232,14 @@ export default function Home() {
                       </svg>
                     </div>
                     <div className={'trackPlay__author'}>
-                      <a className={'trackPlay__authorLink'} href="">
+                      <Link className={'trackPlay__authorLink'} href="#">
                         Ты та...
-                      </a>
+                      </Link>
                     </div>
                     <div className={'trackPlay__album'}>
-                      <a className={'trackPlay__albumLink'} href="">
+                      <Link className={'trackPlay__albumLink'} href="#">
                         Баста
-                      </a>
+                      </Link>
                     </div>
                   </div>
 
