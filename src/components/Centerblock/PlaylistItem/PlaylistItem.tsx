@@ -1,58 +1,58 @@
-import styles from './PlaylistItem.module.css';
+'use client';
 
-interface Track {
-  _id: number;
-  name: string;
-  author: string;
-  album: string;
-  duration_in_seconds: number;
-}
+import styles from './PlaylistItem.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/store/store';
+import { playTrack, togglePlay } from '@/store/playerSlice';
+import { Track } from '@/store/playerSlice';
 
 interface PlaylistItemProps {
   track: Track;
 }
 
 export default function PlaylistItem({ track }: PlaylistItemProps) {
-  const formatDuration = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentTrack, isPlaying } = useSelector((state: RootState) => state.player);
+
+  const isActive = currentTrack?._id === track._id;
+  const isPulsing = isActive && isPlaying;
+
+  const handleClick = () => {
+    if (isActive) {
+      dispatch(togglePlay());
+    } else {
+      dispatch(playTrack(track));
+    }
+  };
+
+  const formatTime = (seconds?: number) => {
+    if (!seconds) return '3:45';
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
   return (
-    <div className={styles.playlist__item}>
+    <div
+      className={`${styles.playlist__item} ${isActive ? styles.active : ''}`}
+      onClick={handleClick}
+    >
       <div className={styles.playlist__track}>
-        <div className={styles.track__title}>
-          <div className={styles.track__titleImage}>
-            <svg className={styles.track__titleSvg}>
-              <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-            </svg>
-          </div>
-          <div className={styles.track__titleText}>
-            <a className={styles.track__titleLink} href="">
-              {track.name}
-              <span className={styles.track__titleSpan}></span>
-            </a>
-          </div>
-        </div>
-        <div className={styles.track__author}>
-          <a className={styles.track__authorLink} href="">
-            {track.author}
-          </a>
-        </div>
-        <div className={styles.track__album}>
-          <a className={styles.track__albumLink} href="">
-            {track.album}
-          </a>
-        </div>
-        <div className={styles.track__time}>
-          <svg className={styles.track__timeSvg}>
-            <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
+        <div className={`${styles.playlist__dot} ${isPulsing ? styles.pulse : ''}`} />
+        <div className={styles.track__icon_wrapper}>
+          <svg className={styles.track__icon}>
+            <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
           </svg>
-          <span className={styles.track__timeText}>
-            {formatDuration(track.duration_in_seconds)}
-          </span>
         </div>
+        <div className={styles.playlist__title}>{track.name}</div>
+      </div>
+      <div className={styles.playlist__author}>{track.author}</div>
+      <div className={styles.playlist__album}>{track.album}</div>
+      <div className={styles.playlist__time}>
+        <svg className={styles.time__like}>
+          <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
+        </svg>
+        {formatTime(track.duration_in_seconds)}
       </div>
     </div>
   );
