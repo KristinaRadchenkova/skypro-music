@@ -269,3 +269,65 @@
   stroke: #ffffff;
   cursor: pointer;
 }
+
+.progressLine {
+  width: 100%;
+  height: 5px;
+  appearance: none;
+  background: #2e2e2e;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.progressLine::-webkit-slider-runnable-track {
+  height: 5px;
+  background: #2e2e2e;
+  border-radius: 5px;
+}
+
+.progressLine::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+  margin-top: -3.5px;
+  cursor: pointer;
+}
+
+.active svg {
+  stroke: #b672ff !important;
+  fill: #b672ff !important;
+}
+
+.player__btnPlaySvg {
+  width: 22px;
+  height: 20px;
+  fill: #d9d9d9;
+  cursor: pointer;
+}
+
+.player__btnPlaySvg:hover {
+  fill: #b672ff;
+}
+
+.player__btnPrevSvg,
+.player__btnNextSvg {
+  cursor: pointer;
+  stroke: #d9d9d9;
+}
+
+.player__btnPrevSvg:hover,
+.player__btnNextSvg:hover {
+  stroke: #b672ff;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.btn:hover svg {
+  stroke: #b672ff;
+  fill: #b672ff;
+}
