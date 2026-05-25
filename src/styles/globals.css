@@ -31,6 +31,7 @@ body {
   height: 100%;
   font-family: 'Montserrat', sans-serif;
   color: #ffffff;
+  overflow: hidden;
 }
 
 input {

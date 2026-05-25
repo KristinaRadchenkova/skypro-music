@@ -3,53 +3,51 @@
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/store/store';
-import { setProgress, setDuration, pauseTrack } from '@/store/playerSlice';
+import {
+  setProgress,
+  setDuration,
+  pauseTrack,
+  playNext,
+} from '@/store/playerSlice';
 
 export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const dispatch = useDispatch<AppDispatch>();
-  const { currentTrack, isPlaying, volume, currentTime } = useSelector(
-    (state: RootState) => state.player
-  );
+  const { currentTrack, isPlaying, volume, currentTime, isRepeat } =
+    useSelector((state: RootState) => state.player);
 
   const prevTrackRef = useRef<string | null>(null);
-  const prevPlayStateRef = useRef<boolean>(false);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const trackSrc = currentTrack?.track_file || '';
-    const isTrackChanged = prevTrackRef.current !== trackSrc;
-    const isPlayStateChanged = prevPlayStateRef.current !== isPlaying;
 
-    prevTrackRef.current = trackSrc;
-    prevPlayStateRef.current = isPlaying;
-
-    if (isTrackChanged && trackSrc) {
+    if (prevTrackRef.current !== trackSrc && trackSrc) {
+      prevTrackRef.current = trackSrc;
       audio.pause();
       audio.src = trackSrc;
       audio.load();
       audio.volume = volume;
-      audio.currentTime = 0;
-      
-      if (isPlaying) {
-        audio.play().catch((err) => console.warn('Play blocked:', err));
-      }
-      return;
-    }
+      audio.currentTime = currentTime;
 
-    if (!isTrackChanged && isPlayStateChanged && trackSrc) {
       if (isPlaying) {
-        audio.play().catch((err) => {
-          console.warn('Play error:', err);
-          dispatch(pauseTrack());
-        });
-      } else {
-        audio.pause();
+        audio.play().catch((err) => console.warn('Play error:', err));
       }
     }
-  }, [currentTrack, isPlaying, volume]);
+  }, [currentTrack]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.play().catch((err) => console.warn('Play error:', err));
+    } else {
+      audio.pause();
+    }
+  }, [isPlaying]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -77,7 +75,14 @@ export default function AudioPlayer() {
   };
 
   const handleEnded = () => {
-    dispatch(pauseTrack());
+    if (isRepeat) {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+      }
+    } else {
+      dispatch(playNext());
+    }
   };
 
   return (
