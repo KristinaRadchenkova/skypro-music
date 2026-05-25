@@ -1,19 +1,11 @@
 'use client';
 
 import styles from './Centerblock.module.css';
-import PlaylistItem from './PlaylistItem/PlaylistItem';
+import PlaylistItem from '../PlaylistItem/PlaylistItem';
+import Filter from '../Filter/Filter';
 import { data } from './data';
-import { useState } from 'react';
 
 export default function Centerblock() {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredTracks = data.filter(
-    (track) =>
-      track.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      track.author.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
   return (
     <div className={styles.centerblock}>
       <div className={styles.centerblock__search}>
@@ -25,17 +17,12 @@ export default function Centerblock() {
           type="search"
           placeholder="Поиск"
           name="search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
       <h2 className={styles.centerblock__h2}>Треки</h2>
-      <div className={styles.centerblock__filter}>
-        <div className={styles.filter__title}>Искать по:</div>
-        <div className={styles.filter__button}>исполнителю</div>
-        <div className={styles.filter__button}>году выпуска</div>
-        <div className={styles.filter__button}>жанру</div>
-      </div>
+
+      <Filter tracks={data} />
+
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={`${styles.playlistTitle__col} ${styles.col01}`}>
@@ -54,7 +41,7 @@ export default function Centerblock() {
           </div>
         </div>
         <div className={styles.content__playlist}>
-          {filteredTracks.map((track) => (
+          {data.map((track) => (
             <PlaylistItem key={track._id} track={track} />
           ))}
         </div>
