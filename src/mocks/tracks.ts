@@ -1,0 +1,68 @@
+import { Track } from '../types';
+
+export const mockTracks: Track[] = [
+  {
+    id: 1,
+    name: 'Midnight City',
+    author: 'M83',
+    genre: 'Synthwave',
+    year: 2011,
+    duration: '4:03',
+  },
+  {
+    id: 2,
+    name: 'Blinding Lights',
+    author: 'The Weeknd',
+    genre: 'Synthpop',
+    year: 2019,
+    duration: '3:20',
+  },
+  {
+    id: 3,
+    name: 'Levitating',
+    author: 'Dua Lipa',
+    genre: 'Pop',
+    year: 2020,
+    duration: '3:23',
+  },
+  {
+    id: 4,
+    name: 'Bohemian Rhapsody',
+    author: 'Queen',
+    genre: 'Rock',
+    year: 1975,
+    duration: '5:55',
+  },
+  {
+    id: 5,
+    name: 'Shape of You',
+    author: 'Ed Sheeran',
+    genre: 'Pop',
+    year: 2017,
+    duration: '3:53',
+  },
+  {
+    id: 6,
+    name: 'Take On Me',
+    author: 'a-ha',
+    genre: 'Synthpop',
+    year: 1985,
+    duration: '3:48',
+  },
+  {
+    id: 7,
+    name: 'Lose Yourself',
+    author: 'Eminem',
+    genre: 'Hip-Hop',
+    year: 2002,
+    duration: '5:26',
+  },
+  {
+    id: 8,
+    name: 'Smells Like Teen Spirit',
+    author: 'Nirvana',
+    genre: 'Rock',
+    year: 1991,
+    duration: '5:01',
+  },
+];

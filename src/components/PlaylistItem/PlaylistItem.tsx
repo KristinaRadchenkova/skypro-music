@@ -4,7 +4,15 @@ import styles from './PlaylistItem.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store/store';
 import { playTrack, togglePlay } from '@/store/playerSlice';
-import { Track } from '@/store/playerSlice';
+
+interface Track {
+  _id: number;
+  name: string;
+  author: string;
+  album: string;
+  duration_in_seconds: number;
+  track_file: string;
+}
 
 interface PlaylistItemProps {
   track: Track;
@@ -12,7 +20,9 @@ interface PlaylistItemProps {
 
 export default function PlaylistItem({ track }: PlaylistItemProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { currentTrack, isPlaying } = useSelector((state: RootState) => state.player);
+  const { currentTrack, isPlaying } = useSelector(
+    (state: RootState) => state.player,
+  );
 
   const isActive = currentTrack?._id === track._id;
   const isPulsing = isActive && isPlaying;
@@ -25,11 +35,10 @@ export default function PlaylistItem({ track }: PlaylistItemProps) {
     }
   };
 
-  const formatTime = (seconds?: number) => {
-    if (!seconds) return '3:45';
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   return (
@@ -38,11 +47,14 @@ export default function PlaylistItem({ track }: PlaylistItemProps) {
       onClick={handleClick}
     >
       <div className={styles.playlist__track}>
-        <div className={`${styles.playlist__dot} ${isPulsing ? styles.pulse : ''}`} />
         <div className={styles.track__icon_wrapper}>
-          <svg className={styles.track__icon}>
-            <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-          </svg>
+          {isPulsing ? (
+            <div className={`${styles.playlist__dot} ${styles.pulse}`} />
+          ) : (
+            <svg className={styles.track__icon}>
+              <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+            </svg>
+          )}
         </div>
         <div className={styles.playlist__title}>{track.name}</div>
       </div>

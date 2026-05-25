@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Track {
-  _id: number; 
+  _id: number;
   name: string;
   author: string;
   album: string;
-  duration_in_seconds?: number; 
-  track_file?: string; 
+  duration_in_seconds?: number;
+  track_file?: string;
   release_date?: string;
   genre?: string[];
   logo?: string | null;
@@ -21,6 +21,7 @@ interface PlayerState {
   volume: number;
   isRepeat: boolean;
   isShuffle: boolean;
+  tracks: Track[];
 }
 
 const initialState: PlayerState = {
@@ -31,12 +32,57 @@ const initialState: PlayerState = {
   volume: 0.5,
   isRepeat: false,
   isShuffle: false,
+  tracks: [],
+};
+
+const getRandomTrack = (tracks: Track[], currentTrack: Track | null) => {
+  const availableTracks = tracks.filter(
+    (track) => track._id !== currentTrack?._id,
+  );
+  if (availableTracks.length === 0) return tracks[0];
+  const randomIndex = Math.floor(Math.random() * availableTracks.length);
+  return availableTracks[randomIndex];
+};
+
+const getNextTrack = (
+  tracks: Track[],
+  currentTrack: Track | null,
+  isShuffle: boolean,
+) => {
+  if (!currentTrack || tracks.length === 0) return null;
+
+  if (isShuffle) {
+    return getRandomTrack(tracks, currentTrack);
+  }
+
+  const currentIndex = tracks.findIndex((t) => t._id === currentTrack._id);
+  const nextIndex = (currentIndex + 1) % tracks.length;
+  return tracks[nextIndex];
+};
+
+const getPrevTrack = (
+  tracks: Track[],
+  currentTrack: Track | null,
+  isShuffle: boolean,
+) => {
+  if (!currentTrack || tracks.length === 0) return null;
+
+  if (isShuffle) {
+    return getRandomTrack(tracks, currentTrack);
+  }
+
+  const currentIndex = tracks.findIndex((t) => t._id === currentTrack._id);
+  const prevIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+  return tracks[prevIndex];
 };
 
 export const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
+    setTracks: (state, action: PayloadAction<Track[]>) => {
+      state.tracks = action.payload;
+    },
     playTrack: (state, action: PayloadAction<Track>) => {
       state.currentTrack = action.payload;
       state.isPlaying = true;
@@ -72,15 +118,38 @@ export const playerSlice = createSlice({
       state.isShuffle = !state.isShuffle;
     },
     playNext: (state) => {
-      console.log('playNext — заглушка');
+      if (state.currentTrack && state.tracks.length > 0) {
+        const nextTrack = getNextTrack(
+          state.tracks,
+          state.currentTrack,
+          state.isShuffle,
+        );
+        if (nextTrack) {
+          state.currentTrack = nextTrack;
+          state.isPlaying = true;
+          state.currentTime = 0;
+        }
+      }
     },
     playPrev: (state) => {
-      console.log('playPrev — заглушка');
+      if (state.currentTrack && state.tracks.length > 0) {
+        const prevTrack = getPrevTrack(
+          state.tracks,
+          state.currentTrack,
+          state.isShuffle,
+        );
+        if (prevTrack) {
+          state.currentTrack = prevTrack;
+          state.isPlaying = true;
+          state.currentTime = 0;
+        }
+      }
     },
   },
 });
 
 export const {
+  setTracks,
   playTrack,
   togglePlay,
   pauseTrack,
